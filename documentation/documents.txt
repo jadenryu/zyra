@@ -1,0 +1,9 @@
+Zyra is a sleek, AI-powered web app designed to automate and streamline the early, tedious steps of data analysis so analysts and junior data scientists can move fast and focus on insights, not grunt work. It ingests messy data from CSVs, Excel files, or databases, then automatically cleans and formats it by fixing data types, handling missing values, dropping duplicates, detecting outliers, and flagging schema drift. Users can assign default cleaning and transformation configurations to standardize workflows and speed up repeated tasks.
+
+Zyra generates rich exploratory data analysis, including visualizations like histograms, correlation heatmaps, and summary statistics, all exportable as polished reports. It recommends smart feature engineering techniques such as encoding schemes, scaling methods, and interaction term creation, explaining each step clearly to keep users in control.
+
+For modeling, Zyra suggests and trains baseline machine learning models tailored to the dataset’s problem type—classification, regression, or clustering—while visualizing feature importance and offering explainability tools like SHAP. Advanced features include built-in statistical tests (t-tests, chi-square, ANOVA), A/B testing calculators, and time-series decomposition.
+
+Users can export the entire data processing and modeling pipeline as Python scripts, Jupyter notebooks, or SQL queries, and deploy trained models instantly through one-click APIs. Collaboration features include project versioning, dashboards, and inline team commenting, ensuring smooth teamwork and transparency.
+
+Zyra is built for speed, consistency, and impact—empowering data professionals to transform raw data into actionable insights faster, smarter, and with less friction.
