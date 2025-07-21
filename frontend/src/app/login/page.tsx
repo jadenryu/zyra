@@ -15,8 +15,8 @@ import { toast } from 'sonner';
 import { BarChart3, Eye, EyeOff } from 'lucide-react';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  password: z.string().min(1, 'Password is required').min(6, 'Password must be at least 6 characters'),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -24,28 +24,40 @@ type LoginForm = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
   });
 
   const onSubmit = async (data: LoginForm) => {
+    console.log('Form submitted with data:', data);
+    setShowErrors(true);
     setIsLoading(true);
+    
     try {
       await login(data.email, data.password);
       toast.success('Successfully logged in!');
       router.push('/dashboard');
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Login failed');
+      console.error('Login error:', error);
+      toast.error(error.message || 'Login failed');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const onError = (errors: any) => {
+    console.log('Form validation errors:', errors);
+    setShowErrors(true);
   };
 
   return (
@@ -71,7 +83,7 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4" noValidate>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -79,9 +91,9 @@ export default function LoginPage() {
                   type="email"
                   placeholder="Enter your email"
                   {...register('email')}
-                  className={errors.email ? 'border-red-500' : ''}
+                  className={showErrors && errors.email ? 'border-red-500' : ''}
                 />
-                {errors.email && (
+                {showErrors && errors.email && (
                   <p className="text-sm text-red-500">{errors.email.message}</p>
                 )}
               </div>
@@ -94,7 +106,7 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     {...register('password')}
-                    className={errors.password ? 'border-red-500' : ''}
+                    className={showErrors && errors.password ? 'border-red-500' : ''}
                   />
                   <button
                     type="button"
@@ -108,13 +120,17 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
-                {errors.password && (
+                {showErrors && errors.password && (
                   <p className="text-sm text-red-500">{errors.password.message}</p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Signing in...' : 'Sign in'}
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isLoading || isSubmitting}
+              >
+                {isLoading || isSubmitting ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
 

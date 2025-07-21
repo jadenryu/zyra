@@ -4,12 +4,22 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from .config import settings
 
-# Async database setup
+# Async database setup with pgbouncer compatibility
 async_engine = create_async_engine(
     settings.database_url.replace("postgresql://", "postgresql+asyncpg://"),
     echo=settings.debug,
     pool_pre_ping=True,
     pool_recycle=300,
+    # Disable prepared statements completely for pgbouncer
+    connect_args={
+        "prepared_statement_cache_size": 0,
+        "statement_cache_size": 0,
+        "server_settings": {
+            "application_name": "zyra_backend",
+        }
+    },
+    # Use NullPool to avoid connection issues
+    poolclass=None
 )
 
 AsyncSessionLocal = sessionmaker(

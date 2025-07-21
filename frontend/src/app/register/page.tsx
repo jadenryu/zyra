@@ -15,10 +15,10 @@ import { toast } from 'sonner';
 import { BarChart3, Eye, EyeOff } from 'lucide-react';
 
 const registerSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string(),
-  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  password: z.string().min(1, 'Password is required').min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
+  fullName: z.string().min(1, 'Full name is required').min(2, 'Full name must be at least 2 characters'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -30,19 +30,25 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
   const { register: registerUser } = useAuth();
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
   });
 
   const onSubmit = async (data: RegisterForm) => {
+    console.log('Form submitted with data:', data);
+    setShowErrors(true);
     setIsLoading(true);
+    
     try {
       await registerUser({
         email: data.email,
@@ -52,10 +58,16 @@ export default function RegisterPage() {
       toast.success('Account created successfully!');
       router.push('/dashboard');
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || 'Registration failed');
+      console.error('Registration error:', error);
+      toast.error(error.message || 'Registration failed');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const onError = (errors: any) => {
+    console.log('Form validation errors:', errors);
+    setShowErrors(true);
   };
 
   return (
@@ -81,7 +93,7 @@ export default function RegisterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4" noValidate>
               <div className="space-y-2">
                 <Label htmlFor="fullName">Full Name</Label>
                 <Input
@@ -89,9 +101,9 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Enter your full name"
                   {...register('fullName')}
-                  className={errors.fullName ? 'border-red-500' : ''}
+                  className={showErrors && errors.fullName ? 'border-red-500' : ''}
                 />
-                {errors.fullName && (
+                {showErrors && errors.fullName && (
                   <p className="text-sm text-red-500">{errors.fullName.message}</p>
                 )}
               </div>
@@ -103,9 +115,9 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="Enter your email"
                   {...register('email')}
-                  className={errors.email ? 'border-red-500' : ''}
+                  className={showErrors && errors.email ? 'border-red-500' : ''}
                 />
-                {errors.email && (
+                {showErrors && errors.email && (
                   <p className="text-sm text-red-500">{errors.email.message}</p>
                 )}
               </div>
@@ -118,7 +130,7 @@ export default function RegisterPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     {...register('password')}
-                    className={errors.password ? 'border-red-500' : ''}
+                    className={showErrors && errors.password ? 'border-red-500' : ''}
                   />
                   <button
                     type="button"
@@ -132,7 +144,7 @@ export default function RegisterPage() {
                     )}
                   </button>
                 </div>
-                {errors.password && (
+                {showErrors && errors.password && (
                   <p className="text-sm text-red-500">{errors.password.message}</p>
                 )}
               </div>
@@ -145,7 +157,7 @@ export default function RegisterPage() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Confirm your password"
                     {...register('confirmPassword')}
-                    className={errors.confirmPassword ? 'border-red-500' : ''}
+                    className={showErrors && errors.confirmPassword ? 'border-red-500' : ''}
                   />
                   <button
                     type="button"
@@ -159,13 +171,17 @@ export default function RegisterPage() {
                     )}
                   </button>
                 </div>
-                {errors.confirmPassword && (
+                {showErrors && errors.confirmPassword && (
                   <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Creating account...' : 'Create account'}
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isLoading || isSubmitting}
+              >
+                {isLoading || isSubmitting ? 'Creating account...' : 'Create account'}
               </Button>
             </form>
 

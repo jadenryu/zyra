@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
@@ -25,4 +26,7 @@ class User(Base):
     default_cleaning_config = Column(Text, nullable=True)  # JSON string
     default_visualization_config = Column(Text, nullable=True)  # JSON string
     theme_preference = Column(String, default="light")
-    language = Column(String, default="en") 
+    language = Column(String, default="en")
+    
+    # Relationships
+    projects = relationship("Project", back_populates="owner", cascade="all, delete-orphan") 

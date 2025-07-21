@@ -3,6 +3,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from app.core.database import get_async_db, get_sync_db
 from app.core.security import verify_token
 from app.models.user import User
@@ -26,16 +27,15 @@ async def get_current_user(
     if email is None:
         raise credentials_exception
     
-    # Get user from database
-    result = await db.execute(
-        "SELECT * FROM users WHERE email = :email", {"email": email}
-    )
-    user = result.fetchone()
+    # Get user from database using SQLAlchemy ORM
+    stmt = select(User).where(User.email == email)
+    result = await db.execute(stmt)
+    user = result.scalar_one_or_none()
     
     if user is None:
         raise credentials_exception
     
-    return User(**dict(user))
+    return user
 
 
 async def get_current_active_user(
@@ -62,16 +62,15 @@ def get_current_user_sync(
     if email is None:
         raise credentials_exception
     
-    # Get user from database
-    result = db.execute(
-        "SELECT * FROM users WHERE email = :email", {"email": email}
-    )
-    user = result.fetchone()
+    # Get user from database using SQLAlchemy ORM
+    stmt = select(User).where(User.email == email)
+    result = db.execute(stmt)
+    user = result.scalar_one_or_none()
     
     if user is None:
         raise credentials_exception
     
-    return User(**dict(user))
+    return user
 
 
 def get_current_active_user_sync(
