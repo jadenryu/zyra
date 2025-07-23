@@ -24,9 +24,11 @@ import {
   Settings,
   FileText,
   PieChart,
-  Scatter3D
+  Scatter3D,
+  MessageSquare
 } from 'lucide-react';
 import { datasetsAPI, dataProcessingAPI, analyticsAPI } from '@/lib/api';
+import { Chat } from '@/components/ui/chat';
 
 interface Dataset {
   id: string;
@@ -895,6 +897,21 @@ export default function DatasetAnalyzePage() {
               </Card>
             </div>
           )}
+          
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <MessageSquare className="h-5 w-5 mr-2" />
+                Chat with Zyra AI
+              </CardTitle>
+              <CardDescription>
+                Ask questions about your dataset and get AI-powered insights
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Chat datasetId={datasetId} />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

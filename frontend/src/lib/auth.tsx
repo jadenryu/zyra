@@ -3,23 +3,19 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
 interface User {
   id: string;
   email: string;
-  full_name: string;
-  avatar_url?: string;
-  is_active: boolean;
+  full_name?: string;
   created_at: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (data: { email: string; password: string; full_name: string }) => Promise<void>;
-  logout: () => void;
+  signOut: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,150 +26,94 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    // Check if user is logged in on app start
+    const token = localStorage.getItem('auth_token');
+    const userData = localStorage.getItem('user_data');
+    
+    if (token && userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_data');
+      }
+    }
+    setLoading(false);
   }, []);
 
-  const checkAuth = async () => {
-    try {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        // Verify token with backend
-        const response = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        } else {
-          localStorage.removeItem('access_token');
-        }
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      localStorage.removeItem('access_token');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const login = async (email: string, password: string) => {
-    console.log('Auth login called with:', { email, password: '***' });
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          username: email,
-          password: password,
-        }),
-      });
-
-      console.log('Login response status:', response.status);
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('Login response error:', error);
-        throw new Error(error.detail || 'Login failed');
-      }
-
-      const data = await response.json();
-      console.log('Login successful, token received');
-      localStorage.setItem('access_token', data.access_token);
-      
-      // Try to get user data, but don't fail login if it doesn't work
-      try {
-        const userResponse = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${data.access_token}`,
-          },
-        });
-
-        if (userResponse.ok) {
-          const userData = await userResponse.json();
-          console.log('User data retrieved:', userData.email);
-          setUser(userData);
-        } else {
-          console.warn('Could not fetch user data, but login was successful');
-          // Set a minimal user object with the email
-          setUser({
-            id: 'temp',
-            email: email,
-            full_name: email,
-            is_active: true,
-            created_at: new Date().toISOString(),
-          });
-        }
-      } catch (userError) {
-        console.warn('User data fetch failed, but login was successful:', userError);
-        // Set a minimal user object with the email
-        setUser({
-          id: 'temp',
-          email: email,
-          full_name: email,
-          is_active: true,
-          created_at: new Date().toISOString(),
-        });
-      }
-    } catch (error) {
-      console.error('Login error in auth context:', error);
-      throw error;
-    }
-  };
-
-  const register = async (data: { email: string; password: string; full_name: string }) => {
-    console.log('Auth register called with:', { ...data, password: '***' });
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ email, password }),
       });
 
-      console.log('Register response status:', response.status);
-
       if (!response.ok) {
-        const error = await response.json();
-        console.error('Register response error:', error);
-        throw new Error(error.detail || 'Registration failed');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
       }
 
-      const userData = await response.json();
-      console.log('Registration successful:', userData.email);
+      const data = await response.json();
       
-      // Auto-login after registration
-      await login(data.email, data.password);
-    } catch (error) {
-      console.error('Registration error in auth context:', error);
+      // Store auth data
+      localStorage.setItem('auth_token', data.access_token);
+      localStorage.setItem('user_data', JSON.stringify(data.user));
+      
+      setUser(data.user);
+    } catch (error: any) {
+      console.error('Login error:', error);
       throw error;
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('access_token');
+  const register = async (userData: { email: string; password: string; full_name: string }) => {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      const data = await response.json();
+      
+      // Store auth data
+      localStorage.setItem('auth_token', data.access_token);
+      localStorage.setItem('user_data', JSON.stringify(data.user));
+      
+      setUser(data.user);
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  };
+
+  const signOut = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
     setUser(null);
     router.push('/');
   };
 
   const value = {
     user,
-    loading,
     login,
     register,
-    logout,
+    signOut,
+    loading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
