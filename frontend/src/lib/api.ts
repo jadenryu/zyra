@@ -2,6 +2,23 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
+// Health check function to test backend connectivity
+export const testBackendConnection = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/health');
+    if (response.ok) {
+      console.log('✅ Backend is running');
+      return true;
+    } else {
+      console.error('❌ Backend responded with error:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error('❌ Backend is not running or unreachable:', error);
+    return false;
+  }
+};
+
 // Helper function to get auth headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem('auth_token'); // Fixed: was 'access_token'
@@ -11,19 +28,12 @@ const getAuthHeaders = () => {
   };
 };
 
-// In-memory storage for mock projects (until backend is fully ready)
-let mockProjects: any[] = [];
+// API Configuration
 
 // Projects API
 export const projectsAPI = {
   async getAll(params?: { limit?: number; skip?: number }) {
     try {
-      // For now, return mock projects since backend might not be fully implemented
-      // This ensures created projects are visible in the list
-      return { data: mockProjects };
-      
-      // When backend is ready, uncomment this code:
-      /*
       const queryParams = new URLSearchParams();
       if (params?.limit) queryParams.append('limit', params.limit.toString());
       if (params?.skip) queryParams.append('skip', params.skip.toString());
@@ -35,23 +45,14 @@ export const projectsAPI = {
       if (!response.ok) throw new Error('Failed to fetch projects');
       const data = await response.json();
       return { data };
-      */
     } catch (error) {
       console.error('Error fetching projects:', error);
-      return { data: mockProjects };
+      throw error;
     }
   },
   
   async getById(id: string) {
     try {
-      // Find mock project
-      const project = mockProjects.find(p => p.id === id);
-      if (project) {
-        return { data: project };
-      }
-      
-      // When backend is ready, uncomment this code:
-      /*
       const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
         headers: getAuthHeaders(),
       });
@@ -59,9 +60,6 @@ export const projectsAPI = {
       if (!response.ok) throw new Error('Failed to fetch project');
       const data = await response.json();
       return { data };
-      */
-      
-      throw new Error('Project not found');
     } catch (error) {
       console.error(`Error fetching project ${id}:`, error);
       throw error;
@@ -70,40 +68,35 @@ export const projectsAPI = {
   
   async create(projectData: { name: string; description?: string }) {
     try {
-      // Create a mock project with a unique ID
-      const mockProject = {
-        id: Date.now().toString(),
-        name: projectData.name,
-        description: projectData.description || '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        owner_id: '1', // Mock owner ID
-        dataset_count: 0,
-        analysis_count: 0,
-        model_count: 0
-      };
+      console.log('Creating project with data:', projectData);
+      console.log('API URL:', `${API_BASE_URL}/projects`);
+      console.log('Headers:', getAuthHeaders());
       
-      // Add to mock storage
-      mockProjects.push(mockProject);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Return the mock project
-      return { data: mockProject };
-      
-      // When backend is ready, uncomment this code:
-      /*
       const response = await fetch(`${API_BASE_URL}/projects`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(projectData),
       });
       
-      if (!response.ok) throw new Error('Failed to create project');
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        let errorMessage = 'Failed to create project';
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch (e) {
+          errorMessage = errorText || errorMessage;
+        }
+        throw new Error(errorMessage);
+      }
+      
       const data = await response.json();
+      console.log('Success response:', data);
       return { data };
-      */
     } catch (error) {
       console.error('Error creating project:', error);
       throw error;

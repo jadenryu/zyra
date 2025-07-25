@@ -4,6 +4,8 @@ from datetime import datetime
 
 
 class ProjectBase(BaseModel):
+    model_config = {"protected_namespaces": ()}
+    
     name: str
     description: Optional[str] = None
     is_public: bool = False

@@ -4,6 +4,8 @@ from datetime import datetime
 
 
 class DatasetBase(BaseModel):
+    model_config = {"protected_namespaces": ()}
+    
     name: str
     description: Optional[str] = None
 
@@ -26,7 +28,7 @@ class DatasetInDB(DatasetBase):
     file_type: str
     row_count: Optional[int] = None
     column_count: Optional[int] = None
-    schema: Optional[Dict[str, Any]] = None
+    data_schema: Optional[Dict[str, Any]] = None
     sample_data: Optional[Dict[str, Any]] = None
     statistics: Optional[Dict[str, Any]] = None
     is_processed: bool

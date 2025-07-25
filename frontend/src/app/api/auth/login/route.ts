@@ -53,7 +53,8 @@ export async function POST(request: NextRequest) {
       user: user,
     });
   } catch (error) {
-    console.error('Login API error:', error);
+    // Log error for monitoring/debugging
+    console.error('Authentication service error');
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

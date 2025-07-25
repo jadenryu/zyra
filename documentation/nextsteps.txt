@@ -1,0 +1,26 @@
+Great, thanks for helping with Zyra so far. Now what I want you to do is to help this become production grade. I want to deploy the frontend on Vercel, buy the domain
+with Namecheap, and deploy the backend on Railway. I have little knowledge of tech stacks, so let me know what other platforms and frameworks I can use in order to 
+help Zyra become production grade, and something that I can pitch to businesses. Give me a roadmap on how I can get this to work at a professional level as clean and 
+as modern as possible.
+
+The next step after this roadmap is to implement some new features. Look at this entire codebase, and try to clean up any code that may not be production grade right now.
+Do not make major changes, for example, changing text color to be more readable, as well as adding small animations is the priority here. Next, the actual features.
+One feature I want to add is an extension of the current analysis page. The analytics page should also have an option for a user to input a database, or import a database from their
+project, and give summary of the dataset. This is easily achieved by recalling summary functions from numpy, pandas, and scikit-learn such as df.head(), df.info(), and other
+summary-like functions. Once a user uploads a dataset there, it should display these features, as well as a AI summary which can be facilitated by Pydantic AI. 
+For example, a user uploads a dataset regarding breast cancer. Then, Zyra should think and display summary statistics, and AI summary, as well as information helpful
+for data scientists. Some great features to show would be to show how many missing values there are in each column, which standardizer might be best for the dataset and why, as well as 
+which model type (Logistic, Linear, KNeighbors) might be best for the dataset. In addition, please add correlation graphs between the features so data scientists
+can observe which features might have a larger/stronger correlation with the target variable. Do not limit yourself to these features, add actual, useful features that data scientists
+need on a daily basis in preprocessing and processing large datasets. 
+
+Next, a feature encompassing these features is a "Default Configuration" mode. What this is depends on each user. The user essentially chooses which features they want summarized/shown 
+for each dataset that they upload. For example, a user can toggle/write that they want to show the number of missing values for each dataset that they upload, and 
+that statistic would be shown on each dataset that they upload. Furthermore, more parts can be implemented into the "Default Configuration", including finding which model
+may be best, or features like that. Do not limit yourself to these features, add actual, useful features that data scientists
+need on a daily basis in preprocessing and processing large datasets. 
+
+Throughout this plan, ask thoughtful questions before and after the implementation process if needed. Let me know if to make Zyra production grade, it must incorporate 
+more professional frameworks. A great example is Pydantic AI, an agentic AI framework. Do not be afraid to implement newer frameworks that perform better than old ones.
+However, do not hallucinate errorful code, instead, ensure your code works by thinking through each step and understanding the logic. If a framework requires manual input, such 
+as api keys, code, then let me know right away. Work on this slowly and meticulously. Let me know if you have any questions. 

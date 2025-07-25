@@ -89,7 +89,6 @@ export default function ProjectDetailPage() {
       const modelsResponse = await mlAPI.getAllModels({ project_id: parseInt(projectId) });
       setModels(modelsResponse.data);
     } catch (error) {
-      console.error('Failed to load project data:', error);
       toast.error('Failed to load project data');
     } finally {
       setLoading(false);
@@ -130,7 +129,7 @@ export default function ProjectDetailPage() {
         <Header />
         <div className="flex">
           <Sidebar />
-          <main className="flex-1 p-8 ml-64">
+          <main className="flex-1 pt-24 p-8 ml-64">
             <div className="mx-auto max-w-7xl">
               <div className="flex items-center mb-8 gap-6">
                 <Link href="/projects" className="btn-secondary p-2">
@@ -165,7 +164,7 @@ export default function ProjectDetailPage() {
         <Header />
         <div className="flex">
           <Sidebar />
-          <main className="flex-1 p-8 ml-64">
+          <main className="flex-1 pt-24 p-8 ml-64">
             <div className="mx-auto max-w-7xl">
               <div className="flex items-center mb-8 gap-6">
                 <Link href="/projects" className="btn-secondary p-2">
@@ -195,7 +194,7 @@ export default function ProjectDetailPage() {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8 ml-64">
+        <main className="flex-1 pt-24 p-8 ml-64">
           <div className="mx-auto max-w-7xl">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">

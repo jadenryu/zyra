@@ -86,8 +86,6 @@ export function Chat({
         }, 1000);
       }
     } catch (error) {
-      console.error("Error getting AI insight:", error);
-      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: "Sorry, I encountered an error while processing your request. Please try again.",

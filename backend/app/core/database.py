@@ -5,21 +5,31 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from .config import settings
 
 # Async database setup with pgbouncer compatibility
+from sqlalchemy.pool import NullPool
+
+# Alternative connection string format for Supabase
+DATABASE_URL = settings.database_url
+if "supabase" in DATABASE_URL:
+    # Supabase direct connection - skip pgbouncer
+    DATABASE_URL = DATABASE_URL.replace(":6543/", ":5432/")
+
 async_engine = create_async_engine(
-    settings.database_url.replace("postgresql://", "postgresql+asyncpg://"),
-    echo=settings.debug,
-    pool_pre_ping=True,
-    pool_recycle=300,
+    DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://"),
+    echo=False,  # Disable echo to reduce prepared statements
+    pool_pre_ping=False,  # Disable pre-ping
+    pool_recycle=-1,  # Disable pool recycle
     # Disable prepared statements completely for pgbouncer
     connect_args={
         "prepared_statement_cache_size": 0,
         "statement_cache_size": 0,
-        "server_settings": {
-            "application_name": "zyra_backend",
-        }
     },
-    # Use NullPool to avoid connection issues
-    poolclass=None
+    # Use NullPool to create new connections each time
+    poolclass=NullPool,
+    # Execution options to disable compiled cache
+    execution_options={
+        "compiled_cache": {},
+        "isolation_level": "AUTOCOMMIT"
+    }
 )
 
 AsyncSessionLocal = sessionmaker(

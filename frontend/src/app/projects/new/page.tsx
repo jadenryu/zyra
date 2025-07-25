@@ -19,7 +19,7 @@ import {
   Folder,
   RefreshCw,
 } from 'lucide-react';
-import { projectsAPI } from '@/lib/api';
+import { projectsAPI, testBackendConnection } from '@/lib/api';
 
 const projectSchema = z.object({
   name: z.string().min(1, 'Project name is required'),
@@ -46,6 +46,12 @@ export default function NewProjectPage() {
     
     setIsSubmitting(true);
     try {
+      // First check if backend is running
+      const backendRunning = await testBackendConnection();
+      if (!backendRunning) {
+        throw new Error('Backend server is not running. Please start the backend server on port 8000.');
+      }
+      
       const response = await projectsAPI.create({
         name: data.name,
         description: data.description || '',
@@ -54,7 +60,6 @@ export default function NewProjectPage() {
       toast.success('Project created successfully!');
       router.push(`/projects/${response.data.id}`);
     } catch (error: any) {
-      console.error('Failed to create project:', error);
       toast.error(error.message || 'Failed to create project');
     } finally {
       setIsSubmitting(false);
@@ -77,7 +82,7 @@ export default function NewProjectPage() {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 pt-24 p-8">
           <div className="mx-auto max-w-3xl">
             <div className="flex items-center mb-8 gap-6">
               <Button variant="ghost" onClick={() => router.push('/projects')} className="p-2">

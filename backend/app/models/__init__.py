@@ -4,6 +4,7 @@ from .dataset import Dataset
 from .analysis import Analysis
 from .ml_model import MLModel
 from .data_cleaning import DataCleaningJob
+from .analytics_config import AnalyticsConfiguration
 
 __all__ = [
     "User",
@@ -11,5 +12,6 @@ __all__ = [
     "Dataset",
     "Analysis",
     "MLModel",
-    "DataCleaningJob"
+    "DataCleaningJob",
+    "AnalyticsConfiguration"
 ] 

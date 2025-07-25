@@ -39,7 +39,6 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginForm) => {
-    console.log('Form submitted with data:', data);
     setShowErrors(true);
     setIsLoading(true);
     
@@ -48,7 +47,6 @@ export default function LoginPage() {
       toast.success('Successfully logged in!');
       router.push('/dashboard');
     } catch (error: any) {
-      console.error('Login error:', error);
       toast.error(error.message || 'Login failed');
     } finally {
       setIsLoading(false);
@@ -56,7 +54,6 @@ export default function LoginPage() {
   };
 
   const onError = (errors: any) => {
-    console.log('Form validation errors:', errors);
     setShowErrors(true);
   };
 

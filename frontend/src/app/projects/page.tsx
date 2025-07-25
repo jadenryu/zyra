@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { useSidebar } from '@/lib/sidebar-context';
 import { 
   FileText, 
   Plus, 
@@ -38,6 +40,7 @@ interface Project {
 
 export default function ProjectsPage() {
   const { user } = useAuth();
+  const { isCollapsed } = useSidebar();
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +58,6 @@ export default function ProjectsPage() {
       const response = await projectsAPI.getAll();
       setProjects(response.data);
     } catch (error) {
-      console.error('Failed to load projects:', error);
       toast.error('Failed to load projects');
     } finally {
       setLoading(false);
@@ -78,7 +80,7 @@ export default function ProjectsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <h1 className="heading-2 mb-4">Please sign in to continue</h1>
           <Link href="/login" className="btn-primary">Sign In</Link>
@@ -88,37 +90,45 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8 ml-64">
+        <main className={cn(
+          "flex-1 pt-20 p-8 pb-20 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] min-h-screen",
+          isCollapsed ? "ml-[70px]" : "ml-[280px]"
+        )}>
           <div className="mx-auto max-w-7xl">
-            <div className="flex justify-between items-center mb-8">
+            {/* Header Section */}
+            <div className="flex justify-between items-start mt-16 mb-6">
               <div>
-                <h1 className="heading-1">Projects</h1>
-                <p className="text-large text-muted">
-                  Manage your data analysis projects
+                <h1 className="text-4xl font-bold text-black mb-2">Projects</h1>
+                <p className="text-lg text-black">
+                  Manage your data analysis projects and track their progress
                 </p>
               </div>
-              <Link href="/projects/new" className="btn-primary">
+              <Link 
+                href="/projects/new" 
+                className="inline-flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+              >
                 <Plus className="h-4 w-4 mr-2" />
-                New Project
+                Create Project
               </Link>
             </div>
 
+            {/* Search Section */}
             <div className="flex items-center space-x-4 mb-8">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                 <Input
                   placeholder="Search projects..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-background border-border focus:ring-brand-500 focus:border-brand-500"
+                  className="pl-10 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 />
               </div>
               <button 
-                className="btn-secondary p-2"
+                className="inline-flex items-center px-3 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 onClick={loadProjects} 
                 disabled={loading}
               >
@@ -159,7 +169,7 @@ export default function ProjectsPage() {
                         </div>
                         <div>
                           <h3 className="heading-3 group-hover:text-brand-600 transition-colors">{project.name}</h3>
-                          <p className="text-sm text-muted mt-1">
+                          <p className="text-sm text-black mt-1">
                             {project.description || 'No description provided'}
                           </p>
                         </div>
@@ -172,25 +182,25 @@ export default function ProjectsPage() {
                           <Database className="h-4 w-4 text-brand-600 mr-1" />
                           <span className="font-semibold text-foreground">{project.dataset_count || 0}</span>
                         </div>
-                        <p className="text-xs text-muted">Datasets</p>
+                        <p className="text-xs text-black">Datasets</p>
                       </div>
                       <div className="text-center p-3 bg-brand-50 rounded-lg">
                         <div className="flex items-center justify-center mb-1">
                           <BarChart3 className="h-4 w-4 text-brand-600 mr-1" />
                           <span className="font-semibold text-foreground">{project.analysis_count || 0}</span>
                         </div>
-                        <p className="text-xs text-muted">Analyses</p>
+                        <p className="text-xs text-black">Analyses</p>
                       </div>
                       <div className="text-center p-3 bg-brand-50 rounded-lg">
                         <div className="flex items-center justify-center mb-1">
                           <FileText className="h-4 w-4 text-brand-600 mr-1" />
                           <span className="font-semibold text-foreground">{project.model_count || 0}</span>
                         </div>
-                        <p className="text-xs text-muted">Models</p>
+                        <p className="text-xs text-black">Models</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm text-muted border-t border-border pt-4">
+                    <div className="flex items-center justify-between text-sm text-black border-t border-border pt-4">
                       <div className="flex items-center">
                         <Clock className="h-3.5 w-3.5 mr-1.5" />
                         <span>{formatDate(project.created_at)}</span>
@@ -213,10 +223,10 @@ export default function ProjectsPage() {
             ) : (
               <div className="professional-card text-center py-16">
                 <div className="icon-container bg-muted mx-auto mb-6">
-                  <Folder className="h-8 w-8 text-muted" />
+                  <Folder className="h-8 w-8 text-black" />
                 </div>
                 <h3 className="heading-3 mb-2">No projects found</h3>
-                <p className="text-muted mb-6 max-w-md mx-auto">
+                <p className="text-black mb-6 max-w-md mx-auto">
                   {searchTerm ? 'No projects match your search criteria. Try adjusting your search terms.' : 'Create your first project to get started with data analysis.'}
                 </p>
                 <Link href="/projects/new" className="btn-primary">

@@ -33,4 +33,6 @@ xgboost==2.0.2
 # lightgbm==4.1.0  # Commented out due to compilation issues
 statsmodels==0.14.0
 pytest==7.4.3
-pytest-asyncio==0.21.1 
+pytest-asyncio==0.21.1
+pydantic-ai==0.0.14
+# Modern AI framework for agentic AI features 

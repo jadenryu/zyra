@@ -1,0 +1,29 @@
+Hello, thanks for helping me with Zyra so far! Before you get started, please read through this document and let me know if you have any questions in advance,
+or information I must manually put in. Ask for clarification before you get started. Do not be afraid to ask any questions, no matter how stupid. For the following steps regarding fixing errors and small QOL changes,
+be consistent with the current theme. 
+
+Please fix the following issues. First of all, some of the pages are not yet implemented, including the analytics page and settings page. Create these following the theme of Zyra.
+Then, fix the formatting errors. In some pages, including the models page, the dashboard overlaps the sidebar, making it hard to read that you are on the Models page, as it is cut off on the left side. Please fix this in correspondence with any other 
+pages that have this error. Then, fix this error. the Logo on the top left is awkwardly placed, as there is a sidebar. Make the sidebar retractable, and adjust logo according to so. Have it be formatted in a 
+way that is both professional and aesthetic. Then, on the dashboard page, all the way down, the numbers in the steps to Getting Started are not aligned properly
+with the steps. Please fix this error. Also, on the dashboard page, there is a lot of gray text that does not contrast with the background, making it hard to see. The boxes in the dashboard
+where it says 0 projects, 0 datasets, and 0 ML models is not formatted properly and looks awkward right now, the elements are all over the place.
+In addition, the notification bell on the top right is only visible on hover, please fix this as well, it should be visible at all times,
+and have a small animation on hover. Also, the account info on the top right is aligned inaccurately and the profile picture is too small. Have it be 
+a proper size with the name, and align the text and image accordingly. Next, here are more errors. When I upload a dataset, it says upload successful on the bottom right.
+However, there are two upload successful boxes. Have one be deleted, keep the one on the bottom right where it says "Dataset uploaded successfully!". Also, on the upload dataset
+page, the text on the right within the Upload Guidelines is all gray and hard to read, fix this. In addition, the page is cut off by the navigation bar. Please fix this,
+and all other pages that have content cut off by the navigation bar or sidebars. Once you make the sidebar retractable, ensure that the pages do not have excess white space on the left side.
+
+Step 2 is to add a new mode. In Settings, there should be a mode between switching from "Data Analysis", which is the current Zyra website, into switching
+to a "Document Analysis" mode, which I will explain shortly. When a user toggles this mode, the sidebar will remain the same, but the pages will be different.
+What this means is that in Document Analysis mode, rather than the user preprocessing data and building models through Zyra, Zyra will be able to process text/documents/pdfs instead.
+This is targeted for students, who can upload the document, have it summarized in a knowledgeable way, and then see summary statistics that are actually helpful.
+For example, students can see how long it would take them to complete the assignment, as well as a difficulty level. Add other features that may be helpful when analyzing a document.
+The best part about this is, over ChatGPT, users will have unlimited images/document uploads, providing a benefit of using Zyra. Users can also train a model
+to write like them to complete assignments automatically instead of manually. For the remaining pages in "Document Analysis" mode, please feel free to add any 
+other features that may be helpful to students. For example, one such feature is a grammar checker, who fixes grammar according to high school standards. 
+That's it for "Document Analysis" mode for now, and please ask any questions before starting, as well as when you're finished, so I can input information accordingly, including clarification
+and potential need for API keys. 
+
+

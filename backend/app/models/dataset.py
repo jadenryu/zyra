@@ -19,7 +19,7 @@ class Dataset(Base):
     # Dataset metadata
     row_count = Column(Integer, nullable=True)
     column_count = Column(Integer, nullable=True)
-    schema = Column(JSON, nullable=True)  # Column types and info
+    data_schema = Column(JSON, nullable=True)  # Column types and info
     sample_data = Column(JSON, nullable=True)  # First few rows
     statistics = Column(JSON, nullable=True)  # Basic stats
     

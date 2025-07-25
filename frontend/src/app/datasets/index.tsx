@@ -54,7 +54,6 @@ export default function DatasetsPage() {
       const response = await datasetsAPI.getAll();
       setDatasets(response.data);
     } catch (error) {
-      console.error('Failed to load datasets:', error);
       toast.error('Failed to load datasets');
     } finally {
       setLoading(false);

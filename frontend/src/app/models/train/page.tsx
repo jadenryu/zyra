@@ -112,7 +112,6 @@ export default function TrainModelPage() {
       const response = await datasetsAPI.getAll();
       setDatasets(response.data);
     } catch (error) {
-      console.error('Failed to load datasets:', error);
       toast.error('Failed to load datasets');
     } finally {
       setLoading(false);
@@ -267,7 +266,6 @@ export default function TrainModelPage() {
       // Redirect to model detail page
       router.push(`/models/${response.data.id}`);
     } catch (error: any) {
-      console.error('Failed to train model:', error);
       toast.error(error.message || 'Failed to train model');
     } finally {
       setTraining(false);
@@ -290,7 +288,7 @@ export default function TrainModelPage() {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 pt-24 p-8">
           <div className="mx-auto max-w-4xl">
             <div className="flex items-center mb-8">
               <Button variant="ghost" onClick={() => router.push('/models')} className="mr-4">

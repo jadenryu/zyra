@@ -60,7 +60,8 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Registration API error:', error);
+    // Log error for monitoring/debugging
+    console.error('Registration service error');
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

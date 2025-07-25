@@ -96,7 +96,6 @@ export default function DatasetAnalyzePage() {
       await generateDashboard();
     } catch (error: any) {
       toast.error('Failed to load dataset');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -124,7 +123,6 @@ export default function DatasetAnalyzePage() {
       toast.success('Comprehensive report generated!');
     } catch (error: any) {
       toast.error('Failed to generate comprehensive report');
-      console.error(error);
     } finally {
       setAnalysisLoading(false);
     }
@@ -149,7 +147,6 @@ export default function DatasetAnalyzePage() {
       toast.success('Outlier detection completed!');
     } catch (error: any) {
       toast.error('Failed to detect outliers');
-      console.error(error);
     } finally {
       setAnalysisLoading(false);
     }
@@ -174,7 +171,6 @@ export default function DatasetAnalyzePage() {
       toast.success('Feature engineering suggestions generated!');
     } catch (error: any) {
       toast.error('Failed to get feature suggestions');
-      console.error(error);
     } finally {
       setAnalysisLoading(false);
     }
@@ -194,7 +190,6 @@ export default function DatasetAnalyzePage() {
       setDashboard(data);
     } catch (error: any) {
       toast.error('Failed to generate dashboard');
-      console.error(error);
     }
   };
 
@@ -222,7 +217,6 @@ export default function DatasetAnalyzePage() {
       toast.success('Visualization created!');
     } catch (error: any) {
       toast.error('Failed to create visualization');
-      console.error(error);
     } finally {
       setAnalysisLoading(false);
     }
@@ -257,7 +251,6 @@ export default function DatasetAnalyzePage() {
       toast.success(`Report exported as ${format.toUpperCase()}!`);
     } catch (error: any) {
       toast.error('Failed to export report');
-      console.error(error);
     }
   };
 

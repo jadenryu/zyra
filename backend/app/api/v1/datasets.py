@@ -240,8 +240,8 @@ async def delete_dataset(
             path=dataset_data.file_path
         )
     except Exception as e:
-        # Log error but continue with database deletion
-        print(f"Failed to delete file from storage: {str(e)}")
+        # Failed to delete file from storage - continuing with database deletion
+        pass
     
     # Delete from database
     await db.execute(

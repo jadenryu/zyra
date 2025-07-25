@@ -244,7 +244,7 @@ class MLService:
             
             return True
         except Exception as e:
-            print(f"Error deleting model files: {str(e)}")
+            # Error deleting model files - continuing
             return False
     
     async def get_ai_insights(self, data_summary: str, question: str) -> str:

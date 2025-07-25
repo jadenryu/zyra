@@ -168,8 +168,8 @@ async def delete_model(
     try:
         await ml_service.delete_model_files(model_data)
     except Exception as e:
-        # Log error but continue with database deletion
-        print(f"Failed to delete model files: {str(e)}")
+        # Failed to delete model files - continuing with database deletion
+        pass
     
     # Delete from database
     await db.execute(

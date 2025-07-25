@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { useSidebar } from '@/lib/sidebar-context';
 import { 
   Database, 
   Plus, 
@@ -37,6 +39,7 @@ interface Dataset {
 
 export default function DatasetsPage() {
   const { user } = useAuth();
+  const { isCollapsed } = useSidebar();
   const router = useRouter();
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +57,6 @@ export default function DatasetsPage() {
       const response = await datasetsAPI.getAll();
       setDatasets(response.data);
     } catch (error) {
-      console.error('Failed to load datasets:', error);
       toast.error('Failed to load datasets');
     } finally {
       setLoading(false);
@@ -99,9 +101,9 @@ export default function DatasetsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Please sign in to continue</h1>
+          <h1 className="text-2xl font-bold text-black">Please sign in to continue</h1>
           <Button className="mt-4" onClick={() => router.push('/login')}>Sign In</Button>
         </div>
       </div>
@@ -109,16 +111,19 @@ export default function DatasetsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8">
+        <main className={cn(
+          "flex-1 pt-20 p-8 pb-20 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] min-h-screen",
+          isCollapsed ? "ml-[70px]" : "ml-[280px]"
+        )}>
           <div className="mx-auto max-w-7xl">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center mb-8 mt-16">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Datasets</h1>
-                <p className="mt-2 text-gray-600">
+                <h1 className="text-4xl font-bold text-black mb-3">Datasets</h1>
+                <p className="mt-2 text-black">
                   Manage and analyze your datasets
                 </p>
               </div>
@@ -132,7 +137,7 @@ export default function DatasetsPage() {
 
             <div className="flex items-center space-x-4 mb-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black" />
                 <Input
                   placeholder="Search datasets..."
                   value={searchTerm}
@@ -153,14 +158,14 @@ export default function DatasetsPage() {
                 {[...Array(6)].map((_, i) => (
                   <Card key={i} className="animate-pulse">
                     <CardHeader className="space-y-2">
-                      <div className="h-5 bg-gray-200 rounded w-1/2"></div>
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+                      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        <div className="h-4 bg-gray-200 rounded"></div>
-                        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                        <div className="h-4 bg-gray-300 rounded"></div>
+                        <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+                        <div className="h-4 bg-gray-300 rounded w-2/3"></div>
                       </div>
                     </CardContent>
                   </Card>
@@ -188,7 +193,7 @@ export default function DatasetsPage() {
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <div className="space-y-2 text-sm text-gray-500">
+                        <div className="space-y-2 text-sm text-black">
                           <div className="flex justify-between">
                             <span>Size:</span>
                             <span className="font-medium">{formatFileSize(dataset.file_size)}</span>
@@ -217,9 +222,9 @@ export default function DatasetsPage() {
               </div>
             ) : (
               <div className="text-center py-16 bg-white rounded-lg border">
-                <Database className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No datasets found</h3>
-                <p className="text-gray-600 mb-6">
+                <Database className="h-12 w-12 text-black mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-black mb-2">No datasets found</h3>
+                <p className="text-black mb-6">
                   {searchTerm ? 'No datasets match your search criteria' : 'Upload your first dataset to get started'}
                 </p>
                 <Link href="/datasets/upload">

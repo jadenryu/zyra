@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { useSidebar } from '@/lib/sidebar-context';
 import { 
   Brain, 
   Plus, 
@@ -49,6 +51,7 @@ interface Model {
 
 export default function ModelsPage() {
   const { user } = useAuth();
+  const { isCollapsed } = useSidebar();
   const router = useRouter();
   const [models, setModels] = useState<Model[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +69,6 @@ export default function ModelsPage() {
       const response = await mlAPI.getAllModels();
       setModels(response.data);
     } catch (error) {
-      console.error('Failed to load models:', error);
       toast.error('Failed to load models');
     } finally {
       setLoading(false);
@@ -135,9 +137,9 @@ export default function ModelsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Please sign in to continue</h1>
+          <h1 className="text-2xl font-bold text-black">Please sign in to continue</h1>
           <Button className="mt-4" onClick={() => router.push('/login')}>Sign In</Button>
         </div>
       </div>
@@ -145,28 +147,41 @@ export default function ModelsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8">
+        <main className={cn(
+          "flex-1 pt-20 p-8 pb-20 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] min-h-screen",
+          isCollapsed ? "ml-[70px]" : "ml-[280px]"
+        )}>
           <div className="mx-auto max-w-7xl">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Models</h1>
-                <p className="mt-2 text-gray-600">
-                  Manage and deploy your machine learning models
-                </p>
+            {/* Header Section */}
+            <div className="mb-8 mt-16 animate-fade-in">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6">
+                <div>
+                  <h1 className="text-4xl font-bold text-black mb-3">
+                    Models
+                  </h1>
+                  <p className="text-lg text-black">
+                    Manage and deploy your machine learning models
+                  </p>
+                </div>
+                <div className="mt-4 sm:mt-0">
+                  <button 
+                    onClick={() => router.push('/models/train')}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-all duration-200 font-medium"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Train Model
+                  </button>
+                </div>
               </div>
-              <Button onClick={() => router.push('/models/train')}>
-                <Plus className="h-4 w-4 mr-2" />
-                Train New Model
-              </Button>
             </div>
 
             <div className="flex items-center space-x-4 mb-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black" />
                 <Input
                   placeholder="Search models..."
                   value={searchTerm}
@@ -187,14 +202,14 @@ export default function ModelsPage() {
                 {[...Array(6)].map((_, i) => (
                   <Card key={i} className="animate-pulse">
                     <CardHeader className="space-y-2">
-                      <div className="h-5 bg-gray-200 rounded w-1/2"></div>
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+                      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        <div className="h-4 bg-gray-200 rounded"></div>
-                        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                        <div className="h-4 bg-gray-300 rounded"></div>
+                        <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+                        <div className="h-4 bg-gray-300 rounded w-2/3"></div>
                       </div>
                     </CardContent>
                   </Card>
@@ -231,15 +246,15 @@ export default function ModelsPage() {
                           <div className="space-y-4">
                             <div>
                               <div className="flex justify-between text-sm mb-1">
-                                <span className="text-gray-500">Algorithm</span>
+                                <span className="text-black">Algorithm</span>
                                 <span className="font-medium">{model.algorithm}</span>
                               </div>
                               <div className="flex justify-between text-sm mb-1">
-                                <span className="text-gray-500">Type</span>
+                                <span className="text-black">Type</span>
                                 <span className="font-medium capitalize">{model.model_type}</span>
                               </div>
                               <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">{metric.name}</span>
+                                <span className="text-black">{metric.name}</span>
                                 <span className="font-medium">{metric.value}</span>
                               </div>
                             </div>
@@ -255,7 +270,7 @@ export default function ModelsPage() {
                             )}
                           </div>
                         </CardContent>
-                        <CardFooter className="border-t pt-4 text-xs text-gray-500">
+                        <CardFooter className="border-t pt-4 text-xs text-black">
                           Created {formatDate(model.created_at)}
                         </CardFooter>
                       </Card>
@@ -265,9 +280,9 @@ export default function ModelsPage() {
               </div>
             ) : (
               <div className="text-center py-16 bg-white rounded-lg border">
-                <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No models found</h3>
-                <p className="text-gray-600 mb-6">
+                <Brain className="h-12 w-12 text-black mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-black mb-2">No models found</h3>
+                <p className="text-black mb-6">
                   {searchTerm ? 'No models match your search criteria' : 'Train your first model to get started'}
                 </p>
                 <Button onClick={() => router.push('/models/train')}>

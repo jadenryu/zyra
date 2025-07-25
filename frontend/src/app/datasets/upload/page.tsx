@@ -120,8 +120,8 @@ export default function DatasetUploadPage() {
       formData.append('name', datasetName.trim());
       formData.append('description', description.trim());
 
-      // For now, simulate a successful upload
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Upload to backend
+      const result = await datasetsAPI.upload(formData);
       
       setProgress(100);
       setSuccess(true);
@@ -140,7 +140,6 @@ export default function DatasetUploadPage() {
       }, 2000);
 
     } catch (error) {
-      console.error("Upload failed:", error);
       toast.error("Upload failed. Please try again.");
     } finally {
       clearInterval(progressInterval);
@@ -171,7 +170,7 @@ export default function DatasetUploadPage() {
       <Header />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 p-8 ml-64">
+        <main className="flex-1 pt-24 p-8 ml-64">
           <div className="mx-auto max-w-4xl">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">

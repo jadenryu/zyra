@@ -29,4 +29,5 @@ class User(Base):
     language = Column(String, default="en")
     
     # Relationships
-    projects = relationship("Project", back_populates="owner", cascade="all, delete-orphan") 
+    projects = relationship("Project", back_populates="owner", cascade="all, delete-orphan")
+    analytics_configurations = relationship("AnalyticsConfiguration", back_populates="user", cascade="all, delete-orphan") 

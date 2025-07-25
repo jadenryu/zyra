@@ -45,7 +45,6 @@ export default function RegisterPage() {
   });
 
   const onSubmit = async (data: RegisterForm) => {
-    console.log('Form submitted with data:', data);
     setShowErrors(true);
     setIsLoading(true);
     
@@ -58,7 +57,6 @@ export default function RegisterPage() {
       toast.success('Account created successfully!');
       router.push('/dashboard');
     } catch (error: any) {
-      console.error('Registration error:', error);
       toast.error(error.message || 'Registration failed');
     } finally {
       setIsLoading(false);
@@ -66,7 +64,6 @@ export default function RegisterPage() {
   };
 
   const onError = (errors: any) => {
-    console.log('Form validation errors:', errors);
     setShowErrors(true);
   };
 
